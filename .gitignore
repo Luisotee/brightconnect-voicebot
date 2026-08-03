@@ -1,0 +1,6 @@
+.env
+node_modules/
+*.log
+
+# IAG's exercise brief — their document, not mine to redistribute
+Hiring Exercise - AI Conversational Designer - Voicebot.pdf

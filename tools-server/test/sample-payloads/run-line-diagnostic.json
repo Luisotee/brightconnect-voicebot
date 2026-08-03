@@ -1,0 +1,12 @@
+{
+  "message": {
+    "type": "tool-calls",
+    "toolCallList": [
+      {
+        "id": "call_diag_002",
+        "name": "runLineDiagnostic",
+        "arguments": { "accountId": "BC-100482" }
+      }
+    ]
+  }
+}

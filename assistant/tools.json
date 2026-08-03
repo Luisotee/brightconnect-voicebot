@@ -1,0 +1,186 @@
+{
+  "_comment": "Custom function tools. {{TOOLS_BASE_URL}} and {{VAPI_TOOL_SECRET}} are substituted from .env at deploy time. Every tool carries a request-start message so the caller never sits in silence while the webhook runs.",
+
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "lookupAccount",
+        "description": "Look up a customer account by the phone number on the account. Returns their name, plan, whether there is an outage in their area, their balance and due date, and their contract status. Call this once, early, for every intent. Do not ask the customer to identify themselves a second time.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "phoneNumber": {
+              "type": "string",
+              "description": "The phone number on the account, digits only or in any spoken format."
+            },
+            "accountId": {
+              "type": "string",
+              "description": "The account number, if the customer gives that instead of a phone number. Format BC-123456."
+            }
+          },
+          "required": []
+        }
+      },
+      "server": {
+        "url": "{{TOOLS_BASE_URL}}",
+        "headers": { "x-vapi-secret": "{{VAPI_TOOL_SECRET}}" },
+        "timeoutSeconds": 10
+      },
+      "messages": [
+        { "type": "request-start", "content": "Give me one second." }
+      ]
+    },
+
+    {
+      "type": "function",
+      "function": {
+        "name": "runLineDiagnostic",
+        "description": "Run a diagnostic on the customer's line. Only use this for internet fault calls, and only after lookupAccount has shown there is no outage in their area. Returns whether the line is healthy and what the likely cause is.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "accountId": { "type": "string", "description": "The account number from lookupAccount." },
+            "phoneNumber": { "type": "string", "description": "The phone number on the account." }
+          },
+          "required": []
+        }
+      },
+      "server": {
+        "url": "{{TOOLS_BASE_URL}}",
+        "headers": { "x-vapi-secret": "{{VAPI_TOOL_SECRET}}" },
+        "timeoutSeconds": 15
+      },
+      "messages": [
+        { "type": "request-start", "content": "Let me run a quick check on the line. This takes a few seconds." }
+      ]
+    },
+
+    {
+      "type": "function",
+      "function": {
+        "name": "sendPaymentLink",
+        "description": "Text the customer a secure link to pay their bill. Use this instead of ever taking card details by voice. Confirm the destination number with the customer before calling it.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "accountId": { "type": "string", "description": "The account number from lookupAccount." },
+            "phoneNumber": { "type": "string", "description": "The number to text the link to. Defaults to the number on the account." }
+          },
+          "required": []
+        }
+      },
+      "server": {
+        "url": "{{TOOLS_BASE_URL}}",
+        "headers": { "x-vapi-secret": "{{VAPI_TOOL_SECRET}}" },
+        "timeoutSeconds": 10
+      },
+      "messages": [
+        { "type": "request-start", "content": "Sending that now." }
+      ]
+    },
+
+    {
+      "type": "function",
+      "function": {
+        "name": "getPlanOptions",
+        "description": "Get the plans available to this customer other than their current one. Describe at most two that match what the customer asked for. Never read the whole list aloud.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "accountId": { "type": "string", "description": "The account number from lookupAccount." },
+            "phoneNumber": { "type": "string", "description": "The phone number on the account." }
+          },
+          "required": []
+        }
+      },
+      "server": {
+        "url": "{{TOOLS_BASE_URL}}",
+        "headers": { "x-vapi-secret": "{{VAPI_TOOL_SECRET}}" },
+        "timeoutSeconds": 10
+      },
+      "messages": [
+        { "type": "request-start", "content": "Let me see what's available on your account." }
+      ]
+    },
+
+    {
+      "type": "function",
+      "function": {
+        "name": "schedulePlanChange",
+        "description": "Move the customer onto a different plan, effective next billing cycle. Confirm the new plan name and price with the customer before calling this. If the response says requiresHuman, do not process it — explain why and escalate.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "accountId": { "type": "string", "description": "The account number from lookupAccount." },
+            "phoneNumber": { "type": "string", "description": "The phone number on the account." },
+            "newPlanId": {
+              "type": "string",
+              "description": "The plan id from getPlanOptions.",
+              "enum": ["essential-100", "fiber-500", "fiber-1gig"]
+            }
+          },
+          "required": ["newPlanId"]
+        }
+      },
+      "server": {
+        "url": "{{TOOLS_BASE_URL}}",
+        "headers": { "x-vapi-secret": "{{VAPI_TOOL_SECRET}}" },
+        "timeoutSeconds": 10
+      },
+      "messages": [
+        { "type": "request-start", "content": "Setting that up for you." }
+      ]
+    },
+
+    {
+      "type": "function",
+      "function": {
+        "name": "escalateToHuman",
+        "description": "Hand the call to a human agent. Opens a ticket and passes a summary so the customer does not have to repeat themselves. Use this for cancellations, refunds and billing disputes, when you have failed to understand the customer twice, when they ask for a human, when they are upset, when a tool has failed twice, or for anything outside internet faults, billing and plan changes.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "reason": {
+              "type": "string",
+              "description": "Why this call is being escalated.",
+              "enum": [
+                "cancellation",
+                "billing_dispute",
+                "refund_request",
+                "hardware_fault",
+                "unresolved_fault",
+                "early_termination_fee",
+                "customer_requested_human",
+                "customer_distressed",
+                "asr_failure",
+                "tool_failure",
+                "out_of_scope"
+              ]
+            },
+            "summary": {
+              "type": "string",
+              "description": "What happened on the call, in two or three sentences, written for the human agent picking it up. Include what was already tried and anything time-sensitive the customer mentioned."
+            },
+            "accountId": { "type": "string", "description": "The account number, if known." },
+            "phoneNumber": { "type": "string", "description": "The phone number on the account, if known." }
+          },
+          "required": ["reason", "summary"]
+        }
+      },
+      "server": {
+        "url": "{{TOOLS_BASE_URL}}",
+        "headers": { "x-vapi-secret": "{{VAPI_TOOL_SECRET}}" },
+        "timeoutSeconds": 10
+      },
+      "messages": [
+        { "type": "request-start", "content": "Let me get you to the right person." }
+      ]
+    },
+
+    {
+      "type": "endCall",
+      "_comment": "Lets Ava close the call herself after a goodbye, rather than leaving dead air burning minutes."
+    }
+  ]
+}

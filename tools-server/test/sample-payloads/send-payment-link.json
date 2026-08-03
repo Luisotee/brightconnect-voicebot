@@ -1,0 +1,12 @@
+{
+  "message": {
+    "type": "tool-calls",
+    "toolCallList": [
+      {
+        "id": "call_pay_003",
+        "name": "sendPaymentLink",
+        "arguments": { "phoneNumber": "4155550166" }
+      }
+    ]
+  }
+}

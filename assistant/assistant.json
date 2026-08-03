@@ -1,0 +1,82 @@
+{
+  "_comment": "Everything about the assistant EXCEPT provider choices (stack.json) and tools (tools.json). deploy.mjs merges all three, injects prompt.md as the system message, and substitutes {{ENV_VARS}}.",
+
+  "name": "BrightConnect — Ava",
+
+  "firstMessage": "Hi, thanks for calling BrightConnect. I'm Ava. What can I help you with today?",
+  "firstMessageMode": "assistant-speaks-first",
+
+  "startSpeakingPlan": {
+    "_comment": "Deliberately NO smartEndpointingPlan. Flux does end-of-turn detection natively inside the ASR; stacking Vapi's endpointing on top would mean two systems deciding the same thing and adds latency for nothing. waitSeconds is a small floor so a caller drawing breath mid-sentence is not cut off.",
+    "waitSeconds": 0.3
+  },
+
+  "stopSpeakingPlan": {
+    "_comment": "Barge-in. numWords 0 means interrupt on any speech rather than waiting for the caller to produce N words. An agent that talks over an interruption is the fastest way to make someone ask for a human.",
+    "numWords": 0,
+    "voiceSeconds": 0.2,
+    "backoffSeconds": 1.0
+  },
+
+  "messagePlan": {
+    "idleMessages": [
+      "Are you still there?",
+      "I can't hear anything — are you still with me?"
+    ],
+    "idleTimeoutSeconds": 8,
+    "idleMessageMaxSpokenCount": 2
+  },
+
+  "silenceTimeoutSeconds": 30,
+
+  "maxDurationSeconds": 240,
+  "_maxDurationComment": "Cost guardrail. The demo page is public, so an unbounded call length is an unbounded bill.",
+
+  "endCallPhrases": ["goodbye", "bye for now", "thanks for calling BrightConnect"],
+
+  "backgroundDenoisingEnabled": true,
+
+  "analysisPlan": {
+    "_comment": "Post-call QA loop. Without structured output you cannot answer 'what fraction of calls did the bot actually resolve' — which is the only number that tells you whether the design works.",
+    "structuredDataPlan": {
+      "enabled": true,
+      "schema": {
+        "type": "object",
+        "properties": {
+          "intent": {
+            "type": "string",
+            "enum": ["internet_fault", "pay_bill", "change_plan", "cancel_subscription", "other", "unclear"],
+            "description": "The customer's primary intent."
+          },
+          "resolved": {
+            "type": "boolean",
+            "description": "True if the bot resolved the request without a human."
+          },
+          "escalated": {
+            "type": "boolean",
+            "description": "True if the call was handed to a human."
+          },
+          "escalationReason": {
+            "type": "string",
+            "description": "The reason passed to escalateToHuman, or empty if not escalated."
+          },
+          "toolsUsed": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Names of the tools called during this conversation."
+          },
+          "customerSentiment": {
+            "type": "string",
+            "enum": ["positive", "neutral", "frustrated", "angry"],
+            "description": "The customer's tone by the end of the call."
+          },
+          "noMatchCount": {
+            "type": "integer",
+            "description": "How many times the bot failed to understand the customer."
+          }
+        },
+        "required": ["intent", "resolved", "escalated"]
+      }
+    }
+  }
+}

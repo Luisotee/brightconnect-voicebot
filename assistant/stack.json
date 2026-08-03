@@ -1,0 +1,58 @@
+{
+  "_comment": "The entire provider stack, isolated. Swapping a layer is an edit here plus a redeploy — nothing else in the repo changes. Keys beginning with _ are stripped at deploy time.",
+
+  "model": {
+    "_comment": "Gemini 3.5 Flash: low time-to-first-token, reliable tool calling, cheap. NOT 2.5 Flash — Google retires that family in October 2026. Confirm the exact string against Vapi's dashboard dropdown; their supported-model list moves faster than their docs.",
+    "provider": "google",
+    "model": "gemini-3.5-flash",
+    "temperature": 0.3,
+    "maxTokens": 250
+  },
+
+  "transcriber": {
+    "_comment": "Deepgram Flux has end-of-turn detection built into the ASR, which removes a whole stage from the pipeline. eotThreshold is the responsiveness knob (0.5-0.6 aggressive, 0.9-1.0 conservative). eotTimeoutMs is the MAXIMUM wait before forcing a turn end, not a typical wait — Vapi documents 2000-10000ms.",
+    "provider": "deepgram",
+    "model": "flux-general-en",
+    "language": "en",
+    "eotThreshold": 0.7,
+    "eotTimeoutMs": 3000,
+    "keyterm": [
+      "BrightConnect",
+      "fiber",
+      "Fiber 500",
+      "Fiber 1 Gig",
+      "Essential 100",
+      "router",
+      "modem",
+      "outage",
+      "broadband",
+      "account number",
+      "billing"
+    ],
+    "fallbackPlan": {
+      "_comment": "Nova-3 covers the risk of Flux being the newer model. Different architecture, so a Flux-specific failure does not take the call down.",
+      "autoFallback": { "enabled": true },
+      "transcribers": [
+        {
+          "provider": "deepgram",
+          "model": "nova-3",
+          "language": "en"
+        }
+      ]
+    }
+  },
+
+  "voice": {
+    "_comment": "ElevenLabs Flash v2.5 — ~75ms time to first audio. NOT eleven_turbo_v2_5 (retired, though Vapi docs samples still show it) and NOT Eleven v3 (better sounding but not real-time, so wrong for a voicebot). voiceId is Rachel, a neutral US female voice; swap it by listening, never from a spec sheet.",
+    "provider": "11labs",
+    "model": "eleven_flash_v2_5",
+    "voiceId": "21m00Tcm4TlvDq8ikWAM",
+    "stability": 0.5,
+    "similarityBoost": 0.75,
+    "fallbackPlan": {
+      "voices": [
+        { "provider": "cartesia", "voiceId": "a0e99841-438c-4a64-b679-ae501e7d6091" }
+      ]
+    }
+  }
+}

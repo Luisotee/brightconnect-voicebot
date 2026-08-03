@@ -1,0 +1,70 @@
+{
+  "_comment": "Fixture data for the BrightConnect demo. Not a real system. Phone numbers use the 555-01xx range reserved for fiction.",
+
+  "plans": [
+    { "id": "essential-100", "name": "Essential 100", "speedMbps": 100, "monthlyPrice": 35.0 },
+    { "id": "fiber-500", "name": "Fiber 500", "speedMbps": 500, "monthlyPrice": 55.0 },
+    { "id": "fiber-1gig", "name": "Fiber 1 Gig", "speedMbps": 1000, "monthlyPrice": 75.0 }
+  ],
+
+  "accounts": [
+    {
+      "phoneNumber": "4155550166",
+      "accountId": "BC-100482",
+      "firstName": "Sarah",
+      "lastName": "Mitchell",
+      "planId": "fiber-500",
+      "areaOutage": null,
+      "lineDiagnostic": {
+        "result": "healthy",
+        "detail": "Sync established at full rate. Signal healthy to the premises. No faults on the line.",
+        "suspectedCause": "customer_equipment"
+      },
+      "balance": { "amount": 42.6, "currency": "USD", "dueDate": "2026-08-14", "overdue": false },
+      "contract": { "inContract": true, "endsOn": "2027-03-01", "earlyTerminationFee": 145.0 },
+      "_scenario": "Primary demo. No outage, line tests clean, so a router fault. Escalation path."
+    },
+    {
+      "phoneNumber": "4155550182",
+      "accountId": "BC-100517",
+      "firstName": "David",
+      "lastName": "Okafor",
+      "planId": "fiber-1gig",
+      "areaOutage": {
+        "active": true,
+        "reference": "OUT-2291",
+        "cause": "Fiber cut during roadworks",
+        "estimatedFixText": "today by about six in the evening"
+      },
+      "lineDiagnostic": {
+        "result": "fault",
+        "detail": "No sync. Consistent with the known area outage.",
+        "suspectedCause": "area_outage"
+      },
+      "balance": { "amount": 0.0, "currency": "USD", "dueDate": null, "overdue": false },
+      "contract": { "inContract": false, "endsOn": null, "earlyTerminationFee": 0.0 },
+      "_scenario": "Known outage. Bot resolves without escalating: explains cause and ETA."
+    },
+    {
+      "phoneNumber": "4155550193",
+      "accountId": "BC-100634",
+      "firstName": "Maria",
+      "lastName": "Santos",
+      "planId": "essential-100",
+      "areaOutage": null,
+      "lineDiagnostic": {
+        "result": "healthy",
+        "detail": "Sync established at full rate. No faults on the line.",
+        "suspectedCause": "customer_equipment"
+      },
+      "balance": { "amount": 88.2, "currency": "USD", "dueDate": "2026-07-28", "overdue": true },
+      "contract": { "inContract": true, "endsOn": "2026-11-15", "earlyTerminationFee": 120.0 },
+      "_scenario": "Overdue balance, in contract. Upgrade is automated; downgrade hits the ETF rule and escalates."
+    }
+  ],
+
+  "faultInjection": {
+    "_comment": "Calling any tool with this number forces a 500 so the tool-failure recovery path can be demonstrated on camera.",
+    "phoneNumber": "4155550100"
+  }
+}

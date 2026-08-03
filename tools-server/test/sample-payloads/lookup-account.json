@@ -1,0 +1,12 @@
+{
+  "message": {
+    "type": "tool-calls",
+    "toolCallList": [
+      {
+        "id": "call_lookup_001",
+        "name": "lookupAccount",
+        "arguments": { "phoneNumber": "(415) 555-0166" }
+      }
+    ]
+  }
+}
