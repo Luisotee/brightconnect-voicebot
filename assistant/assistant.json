@@ -32,7 +32,7 @@
   "maxDurationSeconds": 240,
   "_maxDurationComment": "Cost guardrail. The demo page is public, so an unbounded call length is an unbounded bill.",
 
-  "endCallPhrases": ["goodbye", "bye for now", "thanks for calling BrightConnect"],
+  "_noEndCallPhrases": "endCallPhrases is deliberately absent. It is a substring matcher that hangs up whenever the ASSISTANT utters a listed phrase — and an earlier version listed 'thanks for calling BrightConnect', which appears verbatim in firstMessage, so Ava hung up on her own greeting. Termination is the endCall tool's job: the model decides explicitly, and silenceTimeoutSeconds and maxDurationSeconds are the backstops. Do not re-add this field. deploy.mjs will refuse to deploy if a phrase here collides with firstMessage.",
 
   "backgroundDenoisingEnabled": true,
 

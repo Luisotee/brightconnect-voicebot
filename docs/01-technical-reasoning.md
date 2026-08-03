@@ -171,6 +171,15 @@ systems: it signals nothing was heard and nothing will change. Each strike chang
 | Out of scope | Redirect once, then escalate. |
 | Card number offered aloud | Interrupt, decline, offer the payment link. |
 
+**Call termination is tool-driven, not phrase-matched.** Vapi offers `endCallPhrases`, which hangs up
+whenever the assistant utters a listed string. An early version of this config listed *"thanks for
+calling BrightConnect"* — which appears verbatim in the greeting, so Ava hung up on herself the
+moment she finished saying hello. Every call produced a one-message transcript. The fix was not to
+remove the offending phrase but to drop the mechanism: a substring matcher racing the `endCall` tool
+is two systems deciding one question, the same anti-pattern rejected in §3 for endpointing.
+`silenceTimeoutSeconds` and `maxDurationSeconds` bound the worst case, and `deploy.mjs` now refuses
+to deploy a config where an end-call phrase collides with the first message.
+
 ### Anti-hallucination
 
 The dangerous failure is not a clumsy sentence — it is a **confident, invented account balance**.

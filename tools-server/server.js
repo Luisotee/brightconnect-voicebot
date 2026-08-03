@@ -14,18 +14,6 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 
-/** Read ../.env so the secret does not have to be exported by hand every time. */
-const loadEnv = () => {
-  const file = path.join(__dirname, '..', '.env');
-  if (!fs.existsSync(file)) return;
-  for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
-    const match = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)$/);
-    if (match) process.env[match[1]] ??= match[2].trim().replace(/^["']|["']$/g, '');
-  }
-};
-
-loadEnv();
-
 const PORT = Number(process.env.PORT || 8787);
 const SHARED_SECRET = process.env.VAPI_TOOL_SECRET || '';
 

@@ -102,6 +102,16 @@ const build = () => {
     });
   }
 
+  // An endCallPhrase that appears in firstMessage makes the assistant hang up on its own
+  // greeting. The only symptom is a one-message call log, which is a miserable thing to
+  // discover during a live demo — so fail here instead.
+  const greeting = (base.firstMessage ?? '').toLowerCase();
+  for (const phrase of base.endCallPhrases ?? []) {
+    if (greeting.includes(phrase.toLowerCase())) {
+      die(`endCallPhrases contains "${phrase}", which appears in firstMessage.\n  The assistant would end the call as soon as it finished greeting the caller.`);
+    }
+  }
+
   return {
     ...base,
     ...stack,
