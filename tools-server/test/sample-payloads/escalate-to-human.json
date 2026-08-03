@@ -4,11 +4,14 @@
     "toolCallList": [
       {
         "id": "call_esc_004",
-        "name": "escalateToHuman",
-        "arguments": {
-          "phoneNumber": "4155550166",
-          "reason": "hardware_fault",
-          "summary": "Line diagnostic clean, no area outage. Customer has power cycled the router three times with no change. Suspected router hardware fault, needs replacement. Customer mentioned a work call in an hour."
+        "type": "function",
+        "function": {
+          "name": "escalateToHuman",
+          "arguments": {
+            "phoneNumber": "4155550166",
+            "reason": "hardware_fault",
+            "summary": "Line diagnostic clean, no area outage. Customer has power cycled the router three times with no change. Suspected router hardware fault, needs replacement. Customer mentioned a work call in an hour."
+          }
         }
       }
     ]

@@ -12,7 +12,10 @@ const BASE_URL = process.env.BASE_URL || 'http://localhost:8787';
 const SECRET = process.env.VAPI_TOOL_SECRET || '';
 
 const call = (id, name, args) => ({
-  message: { type: 'tool-calls', toolCallList: [{ id, name, arguments: args }] },
+  message: {
+    type: 'tool-calls',
+    toolCallList: [{ id, type: 'function', function: { name, arguments: args } }],
+  },
 });
 
 const CASES = [

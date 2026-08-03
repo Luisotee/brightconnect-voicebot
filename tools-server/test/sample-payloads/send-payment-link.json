@@ -4,8 +4,11 @@
     "toolCallList": [
       {
         "id": "call_pay_003",
-        "name": "sendPaymentLink",
-        "arguments": { "phoneNumber": "4155550166" }
+        "type": "function",
+        "function": {
+          "name": "sendPaymentLink",
+          "arguments": { "phoneNumber": "4155550166" }
+        }
       }
     ]
   }

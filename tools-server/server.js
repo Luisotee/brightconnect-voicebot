@@ -6,7 +6,7 @@
  * Receives Vapi `tool-calls` messages and returns tool results. Zero dependencies:
  * run it with `node server.js`, expose it with a Cloudflare Tunnel, point the tools at that URL.
  *
- * Vapi sends:   { message: { type: "tool-calls", toolCallList: [{ id, name, arguments }] } }
+ * Vapi sends:   { message: { type: "tool-calls", toolCallList: [{ id, function: { name, arguments } }] } }
  * Vapi expects: { results: [{ toolCallId, result }] }   (or { toolCallId, error })
  */
 
@@ -205,7 +205,7 @@ const TOOLS = {
 
 // --- request handling ------------------------------------------------------
 
-const runToolCall = ({ id, name, arguments: args }) => {
+const runToolCall = ({ id, function: { name, arguments: args } = {} }) => {
   const handler = TOOLS[name];
   if (!handler) return { toolCallId: id, error: `Unknown tool: ${name}` };
 

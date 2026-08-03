@@ -4,8 +4,11 @@
     "toolCallList": [
       {
         "id": "call_diag_002",
-        "name": "runLineDiagnostic",
-        "arguments": { "accountId": "BC-100482" }
+        "type": "function",
+        "function": {
+          "name": "runLineDiagnostic",
+          "arguments": { "accountId": "BC-100482" }
+        }
       }
     ]
   }

@@ -4,8 +4,11 @@
     "toolCallList": [
       {
         "id": "call_lookup_001",
-        "name": "lookupAccount",
-        "arguments": { "phoneNumber": "(415) 555-0166" }
+        "type": "function",
+        "function": {
+          "name": "lookupAccount",
+          "arguments": { "phoneNumber": "(415) 555-0166" }
+        }
       }
     ]
   }
