@@ -8,6 +8,18 @@
  *   BASE_URL=https://tools.example.com node ...   # against the tunnel
  */
 
+// Same .env as the server, so the shared secret matches without exporting anything by hand.
+const fs = require('node:fs');
+const path = require('node:path');
+
+const envFile = path.join(__dirname, '..', '..', '.env');
+if (fs.existsSync(envFile)) {
+  for (const line of fs.readFileSync(envFile, 'utf8').split('\n')) {
+    const match = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)$/);
+    if (match) process.env[match[1]] ??= match[2].trim().replace(/^["']|["']$/g, '');
+  }
+}
+
 const BASE_URL = process.env.BASE_URL || 'http://localhost:8787';
 const SECRET = process.env.VAPI_TOOL_SECRET || '';
 
