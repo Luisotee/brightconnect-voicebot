@@ -63,7 +63,7 @@ assistant/      Vapi config as code
   tools.json      six function tools, each with a request-start filler
   deploy.mjs      merges the above and deploys via the Vapi API
 tools-server/   Node webhook backend, zero dependencies, fixture data
-web-demo/       single-file browser demo using the Vapi Web SDK
+web/            Next.js browser demo using the Vapi Web SDK (pnpm, Tailwind, shadcn/ui)
 docs/           the three written deliverables + demo beat sheet
 ```
 
@@ -101,7 +101,16 @@ node tools-server/test/run-tests.js                            # 11 checks, all 
 BASE_URL=https://tools.yourdomain.com node tools-server/test/run-tests.js
 ```
 
-**5. Demo** — set `publicKey` and `assistantId` in `web-demo/index.html`, serve it behind your domain.
+**5. Demo**
+
+```bash
+cd web
+cp .env.example .env      # fill in NEXT_PUBLIC_VAPI_PUBLIC_KEY, NEXT_PUBLIC_VAPI_ASSISTANT_ID
+pnpm install
+pnpm dev                                    # local, or `pnpm build && pnpm start` to serve it
+```
+
+`?key=…&assistant=…` in the URL overrides the env vars at runtime, for testing without a redeploy.
 
 Details: [`tools-server/README.md`](tools-server/README.md) · [`docs/demo-script.md`](docs/demo-script.md)
 
