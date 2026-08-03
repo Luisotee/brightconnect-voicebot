@@ -2,8 +2,9 @@
 
 Target: **2–3 minutes**. Two calls: one the bot resolves, one it correctly refuses to.
 
-Record the browser at `web-demo/index.html` — the live transcript and the purple `→ calling …` lines
-let a reviewer *see* the function calls, which is the difference between a demo and a claim.
+Record the browser at the `web/` app (`pnpm dev` in `web/`, or the deployed URL once hosted) — the
+live transcript and the tool-call chips let a reviewer *see* the function calls, which is the
+difference between a demo and a claim.
 
 **Before recording:** run one throwaway call. It warms provider connections, confirms the mic level,
 and means the first call the reviewer sees is not the one where you discover the tunnel is down.

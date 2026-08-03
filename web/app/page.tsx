@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { VoiceDemo } from "@/components/voice-demo";
 
 export default function Home() {
@@ -15,6 +16,17 @@ export default function Home() {
           phone call needed.
         </p>
       </div>
+
+      <Card className="w-full max-w-xl">
+        <CardContent className="flex flex-col items-center gap-3 p-6 text-center">
+          <Badge variant="secondary">Real call, recorded via Vapi</Badge>
+          <p className="text-sm text-muted-foreground">
+            Don&apos;t want to grant mic access? Here&apos;s an actual phone call handled end to
+            end.
+          </p>
+          <audio controls src="/sample-call.mp3" className="w-full" />
+        </CardContent>
+      </Card>
 
       <VoiceDemo />
 
