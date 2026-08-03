@@ -13,13 +13,14 @@ disputes and unresolved faults to a human.
 
 | # | Deliverable | Where |
 |---|---|---|
-| 1 | **Bot demo** | Live page + recorded video *(links below)* |
+| 1 | **Bot demo** | Live page, with a real recorded call embedded *(link below)* |
 | 2 | **Technical reasoning** | [`docs/01-technical-reasoning.md`](docs/01-technical-reasoning.md) |
 | 3 | **Conversation flow** | [`docs/02-conversation-flow.md`](docs/02-conversation-flow.md) |
 | 4 | **Bonus — 40% latency** | [`docs/03-bonus-latency.md`](docs/03-bonus-latency.md) |
 
-> **Demo video:** _add link_
-> **Live demo:** [dev3000.luisotee.com](https://dev3000.luisotee.com/) — talk to the bot in your browser, no phone call needed
+> **Live demo:** [dev3000.luisotee.com](https://dev3000.luisotee.com/) — talk to the bot in your browser, no
+> phone call needed. A real call, recorded via Vapi, plays inline on the page for anyone who'd rather
+> listen than dial in.
 
 ---
 
@@ -112,7 +113,7 @@ pnpm dev                                    # local, or `pnpm build && pnpm star
 
 `?key=…&assistant=…` in the URL overrides the env vars at runtime, for testing without a redeploy.
 
-Details: [`tools-server/README.md`](tools-server/README.md) · [`docs/demo-script.md`](docs/demo-script.md)
+Details: [`tools-server/README.md`](tools-server/README.md)
 
 ---
 
