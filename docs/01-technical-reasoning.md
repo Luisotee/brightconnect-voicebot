@@ -115,7 +115,7 @@ differently, so it is a comparison to run rather than a winner to declare.
 
 ## 4. Latency strategy
 
-### Expected budget for a conversational turn
+### Original targets
 
 | Stage | Expected | Notes |
 |---|---|---|
@@ -126,9 +126,36 @@ differently, so it is a comparison to run rather than a winner to declare.
 | **Total, caller stops → Ava starts** | **~500–800ms** | Target p50 ~800ms, p95 under 1.2s |
 | Tool turns | **+100–300ms** | Own server, one round trip. Target 1.2–1.8s |
 
-> **These are targets, not measurements.** Real p50/p95 should be taken from call logs
-> (`GET /call/:id`, then per-turn deltas from message timestamps) and this table updated with what
-> was actually observed. Estimates presented as measurements are worse than no numbers at all.
+### Measured, from real calls
+
+Pulled from Vapi's own per-call metrics (`GET /call/:id` → `artifact.performanceMetrics`), aggregated
+across every call placed during development and testing: **13 calls, 31 conversational turns**, 2026-08-03.
+
+| Stage | Measured average | Notes |
+|---|---|---|
+| Transcriber (STT) | **640ms** | Deepgram Flux, end-of-turn + final transcript |
+| Endpointing | **243ms** | Highly variable turn to turn (0ms–~1s) — depends how cleanly the caller stopped talking |
+| Model (LLM) | **652ms** | Gemini Flash class, includes tool-calling turns |
+| Voice (TTS) | **196ms** | ElevenLabs Flash v2.5, time to first audio |
+| Transport (round trip) | **~70ms** | 20ms in + 50ms out, WebRTC |
+| **Full turn, caller stops → Ava starts** | **2188ms avg / 1977ms median / 3330ms p90** | See below — running well above the original target |
+
+**This came in slower than the ~500–800ms target, and it's worth saying plainly rather than burying
+it.** Two real factors, not just optimistic planning:
+
+1. **Every one of these test calls exercises at least one tool.** The target table's "tool turns"
+   row (+100–300ms) assumed a fast local webhook; in practice a tool turn also means the model has to
+   reason *twice* — once to decide to call the tool, again to compose a response from its result — so
+   the 652ms model average already reflects that, not a clean single-pass generation.
+2. **Endpointing is the noisiest stage in the flow (0ms–~1s).** Test calls were typed/read from a
+   script at a workstation, not a phone in a real-world acoustic environment, and duration between the
+   caller stopping speaking and the endpointer firing depends heavily on how a given sentence trailed
+   off. A larger sample from real (not scripted, developer-run) calls would tighten this considerably.
+
+The individual-stage numbers (STT 640ms, TTS 196ms) are in line with what each provider's own
+benchmarks claim; the gap between "target" and "measured" lives almost entirely in the model stage and
+in tool-calling overhead, which is exactly where the bonus latency answer
+(`docs/03-bonus-latency.md`) focuses its recommendations.
 
 ### How the design holds to it
 
