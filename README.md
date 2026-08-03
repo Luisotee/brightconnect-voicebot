@@ -19,7 +19,7 @@ disputes and unresolved faults to a human.
 | 4 | **Bonus — 40% latency** | [`docs/03-bonus-latency.md`](docs/03-bonus-latency.md) |
 
 > **Demo video:** _add link_
-> **Live demo:** _add link_ — talk to the bot in your browser, no phone call needed
+> **Live demo:** [dev3000.luisotee.com](https://dev3000.luisotee.com/) — talk to the bot in your browser, no phone call needed
 
 ---
 
