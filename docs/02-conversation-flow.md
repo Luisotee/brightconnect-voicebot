@@ -31,9 +31,9 @@ enough that barge-in never costs the caller anything important.
 
 ## 2. Primary flow — "My internet is not working" (ends in escalation)
 
-Six exchanges. This flow was chosen as primary because it exercises the full range: automated
-diagnosis, a genuine attempt at self-service resolution, and a clean escalation when the bot
-correctly determines it cannot fix the problem.
+Eight lines across the call, escalating on the third caller reply. This flow was chosen as primary
+because it exercises the full range: automated diagnosis, a genuine attempt at self-service
+resolution, and a clean escalation when the bot correctly determines it cannot fix the problem.
 
 ---
 
@@ -296,5 +296,5 @@ a human — and it is a fully avoidable design failure.
 | Handles one specific issue | Primary flow ⑤–⑥ — outage check plus line diagnostic |
 | Appropriate empathy and tone | Primary flow ③, and §1 principle 2 |
 | Clear escalation trigger | Primary flow ⑦–⑧; triggers listed in §4 |
-| 5–6 exchanges | Primary flow is six |
+| 5–6 exchanges | Primary flow runs eight lines / three exchange pairs, ending in escalation |
 | Automated responses, 2+ use cases | Secondary flow (billing) plus plan changes; §4 diagram |

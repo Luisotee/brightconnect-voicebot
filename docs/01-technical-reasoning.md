@@ -157,6 +157,15 @@ benchmarks claim; the gap between "target" and "measured" lives almost entirely 
 in tool-calling overhead, which is exactly where the bonus latency answer
 (`docs/03-bonus-latency.md`) focuses its recommendations.
 
+**Worth being explicit about two things in this data, rather than let a reader find them first.** The
+five stage-averages above sum to ~1801ms, not the reported 2188ms full-turn average. That ~387ms gap
+isn't measurement error — it's very likely the round trip to `tools-server` itself, sitting between
+the model's two passes on a tool turn (decide to call the tool, then compose from its result), which
+Vapi's per-provider metrics don't separately expose as its own line. Separately, one turn in this
+sample hit **7469ms**, driven by a 6.2-second transcriber stall rather than the model or voice stage —
+exactly the kind of tail event an average quietly absorbs, and exactly why the bonus latency answer
+insists on watching p95, not the mean.
+
 ### How the design holds to it
 
 - **One lookup serves every intent.** `lookupAccount` returns identity, plan, outage status, balance
